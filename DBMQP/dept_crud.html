@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(79, 5, 207, 0.511);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            color: rgb(0, 0, 0);
+        }
+        .btn-view {
+            background-color: #380beb;
+        }
+        .btn-insert {
+            background-color: #380beb;
+        }
+        .btn-update {
+            background-color: #380beb;
+        }
+        .btn-delete {
+            background-color: #380beb;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dddddd;
+        }
+        table th {
+            background-color: #34495e;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Department Management System</h1>
+        
+        <div class="button-group">
+            <button class="btn-view" onclick="showView()">VIEW</button>
+            <button class="btn-insert" onclick="showInsert()">INSERT</button>
+            <button class="btn-update" onclick="showUpdate()">UPDATE</button>
+            <button class="btn-delete" onclick="showDelete()">DELETE</button>
+        </div>
+
+        <!-- VIEW SECTION -->
+        <div id="viewSection" class="hidden">
+            <h2>View All Departments</h2>
+            <button onclick="loadDepartments()">Load Departments</button>
+            <div id="viewResult" class="result hidden"></div>
+        </div>
+        
+        <!-- INSERT SECTION -->
+        <div id="insertSection" class="hidden">
+            <h2>Insert New Department</h2>
+            <form id="insertForm">
+                <div class="form-group">
+                    <label>Department No:</label>
+                    <input type="number" id="insertDeptNo" required>
+                </div>
+                <div class="form-group">
+                    <label>Department Name:</label>
+                    <input type="text" id="insertDeptName" required>
+                </div>
+                <div class="form-group">
+                    <label>Location:</label>
+                    <input type="text" id="insertLocation">
+                </div>
+                <button type="button" onclick="insertDepartment()">Submit</button>
+            </form>
+            <div id="insertResult" class="result hidden"></div>
+        </div>
+
+        <!-- UPDATE SECTION -->
+        <div id="updateSection" class="hidden">
+            <h2>Update Department</h2>
+            <form id="updateForm">
+                <div class="form-group">
+                    <label>Department No:</label>
+                    <input type="number" id="updateDeptNo" required>
+                </div>
+                <div class="form-group">
+                    <label>New Department Name:</label>
+                    <input type="text" id="updateDeptName" required>
+                </div>
+                <div class="form-group">
+                    <label>New Location:</label>
+                    <input type="text" id="updateLocation">
+                </div>
+                <button type="button" onclick="updateDepartment()">Submit</button>
+            </form>
+            <div id="updateResult" class="result hidden"></div>
+        </div>
+
+        <!-- DELETE SECTION -->
+        <div id="deleteSection" class="hidden">
+            <h2>Delete Department</h2>
+            <form id="deleteForm">
+                <div class="form-group">
+                    <label>Department No:</label>
+                    <input type="number" id="deleteDeptNo" required>
+                </div>
+                <button type="button" onclick="deleteDepartment()">Submit</button>
+            </form>
+            <div id="deleteResult" class="result hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        function hideAllSections() {
+            document.getElementById('viewSection').classList.add('hidden');
+            document.getElementById('insertSection').classList.add('hidden');
+            document.getElementById('updateSection').classList.add('hidden');
+            document.getElementById('deleteSection').classList.add('hidden');
+        }
+
+        function showView() {
+            hideAllSections();
+            document.getElementById('viewSection').classList.remove('hidden');
+        }
+
+        function showInsert() {
+            hideAllSections();
+            document.getElementById('insertSection').classList.remove('hidden');
+        }
+
+        function showUpdate() {
+            hideAllSections();
+            document.getElementById('updateSection').classList.remove('hidden');
+        }
+
+        function showDelete() {
+            hideAllSections();
+            document.getElementById('deleteSection').classList.remove('hidden');
+        }
+
+        function loadDepartments() {
+            fetch('crud_api.php?action=view')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '<table><tr><th>Dept No</th><th>Name</th><th>Location</th></tr>';
+                    data.forEach(dept => {
+                        html += `<tr><td>${dept.deptno}</td><td>${dept.dname}</td><td>${dept.location}</td></tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('viewResult').innerHTML = html;
+                    document.getElementById('viewResult').classList.remove('hidden');
+                })
+                .catch(error => {
+                    document.getElementById('viewResult').innerHTML = 'Error: ' + error;
+                    document.getElementById('viewResult').classList.remove('hidden');
+                });
+        }
+
+        function insertDepartment() {
+            const deptno = document.getElementById('insertDeptNo').value;
+            const dname = document.getElementById('insertDeptName').value;
+            const location = document.getElementById('insertLocation').value;
+
+            fetch('crud_api.php?action=insert', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({deptno, dname, location})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('insertResult').innerHTML = data.message;
+                document.getElementById('insertResult').classList.remove('hidden');
+                if(data.success) document.getElementById('insertForm').reset();
+            });
+        }
+
+        function updateDepartment() {
+            const deptno = document.getElementById('updateDeptNo').value;
+            const dname = document.getElementById('updateDeptName').value;
+            const location = document.getElementById('updateLocation').value;
+
+            fetch('crud_api.php?action=update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({deptno, dname, location})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('updateResult').innerHTML = data.message;
+                document.getElementById('updateResult').classList.remove('hidden');
+                if(data.success) document.getElementById('updateForm').reset();
+            });
+        }
+
+        function deleteDepartment() {
+            const deptno = document.getElementById('deleteDeptNo').value;
+            
+            if(!confirm('Are you sure you want to delete this department?')) return;
+
+            fetch('crud_api.php?action=delete', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({deptno})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('deleteResult').innerHTML = data.message;
+                document.getElementById('deleteResult').classList.remove('hidden');
+                if(data.success) document.getElementById('deleteForm').reset();
+            });
+        }
+    </script>
+</body>
+</html>
