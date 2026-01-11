@@ -1,0 +1,232 @@
+/*#include <iostream>
+#include <iomanip>
+#define MAX 10
+using namespace std;
+
+int allocation[MAX][MAX], Max[MAX][MAX], need[MAX][MAX];
+int available[MAX], request[MAX], safeSequence[MAX];
+int m, n, r, flag;
+
+void display() {
+    int i, j, k = 0;
+    cout << "\nAllocation  Max  Available  Need" << endl;
+    for(i = 0; i < n; i++) {
+        cout <<setiosflags(ios::right) << " ";
+        for(j=0;j<r;j++) {
+            cout << allocation[i][j] << " ";
+        }
+        cout << setw(9);
+
+        for(j = 0; j < r; j++) {
+            cout << Max[i][j] << " ";
+        }
+        cout << setw(6);
+
+        if(k==1) {
+            for(j = 0; j < r; j++)
+                cout << " ";
+        } else {
+            for(j = 0; j < r; j++)
+                cout << available[j];
+        }
+
+        if(k == 1) {
+            cout << " ";
+        }
+        cout << setw(8);
+
+        for(j = 0; j < r; j++) {
+            cout << need[i][j] << " ";
+        }
+        k = 1;
+        cout << endl;
+        //cout<<resetiosflags(ios::right);
+    }
+}
+
+void SafeSequence() {
+    int safe[n], work[m];
+    int i, j, k=0;
+    bool finish[n];
+
+    for(i = 0; i < n; i++) {
+        safe[i] = -1;
+        finish[i] = false;
+    }
+    for(i = 0; i < r; i++) {
+        work[i] = available[i];
+    }
+    while(true) {
+        for(i = 0; i < n; i++) {
+            flag = 0;
+            for(j = 0; j < r; j++) {
+                if(finish[i]==false && need[i][j] <= work[j])
+                    continue;
+                else
+                    flag = 1;
+            }
+            if(!flag && !finish[i]) {
+                finish[i] = true;
+                for(j = 0; j < r; j++) {
+                    work[j] += allocation[i][j];
+                }
+                safe[k++] = i;
+            }
+        }
+        flag = 0;
+
+        for(i = 0; i < n; i++) {
+            if(finish[i]==false) {
+                flag = 1;
+            }
+        }
+        if(!flag) {
+            break;
+        }
+    }
+    if(!flag) {
+        cout << "\nSafe Sequence: ";
+        for(j=0;j<r;j++)
+            cout << safe[i] << " -> ";
+    }
+    else {
+        cout << "\nNo safe sequence exists";
+    }
+    cout << endl;
+}
+
+void InitialiseResources() {
+    int i, j;
+    cout<<"Enter the number of processes: ";
+    cin>>n;
+    cout<<"Enter the number of Resource types: ";
+    cin>>r;
+
+    cout<<"Enter Allocated Resources for each process:\n";
+    for(i=0;i<n;i++) {
+        cout<<"P"<<i+1<<": ";
+        for(j=0;j<r;j++) {
+            cin >> allocation[i][j];
+        }
+    }
+
+    cout<<"Enter Max resources for each process:\n";
+    for(i=0;i<n;i++) {
+        cout<<"P"<<i+1<<": ";
+        for(j=0;j<r;j++) {
+            cin >> Max[i][j];
+        }
+    }
+    cout<<"Enter Available resources:\n";
+    for(i=0;i<r;i++) {
+        cin >> available[i];
+    }
+
+    for(i=0;i<n;i++) {
+        for(j=0;j<r;j++) {
+            need[i][j] = Max[i][j] - allocation[i][j];
+        }
+    }
+
+    display();
+    SafeSequence();
+}
+
+void RequestResource() {
+    int i ,j;
+    cout<<"\n\nEnter Process Number: ";
+    cin>>m;
+    cout<<"Enter Request: ";
+    for(i=0;i<r;i++) {
+        cin>>request[i];
+    }
+    for(i=0;i<r;i++) {
+        if(need[m][i]<request[i]) {
+            cout<<"\nProcess exceeded maximum claim for resources.\nRequest cannot be granted\n";
+            break; //exit(1); //any thing better so the program does not terminate ??
+        }
+        if(available[i]<request[i]) {
+            cout<<"\nProcess must wait. Insufficient Resources available.\n";
+            break; //exit(1); //any thing better so the program does not terminate ??
+        }
+    }
+}
+
+void RestoreState() {
+    cout<<"\n request cannot be granted"<<endl;
+        for(int i=0; i<m; i++)
+		{
+            available[i] += request[i];
+            allocation[m][i] -= request[i];
+            need[m][i] += request[i];
+        }
+        cout<<"\nStates Restored:"<<endl;
+		display();
+}
+
+void Bankers() {
+    int i, j, m, request[r];
+
+    RequestResource();
+        
+    for(i=0;i<r;i++) {
+        available[i] -= request[i];
+        allocation[m][i] += request[i];
+        need[m][i] -= request[i];
+    }
+    cout<<"\nTemporary"<<endl;
+    int k=0;
+            
+    cout<<"\nAllocation  Available  Need"<<endl;
+    for(i=0;i<n;i++) {
+        cout<<setiosflags(ios::right)<<" ";
+			
+        for(j=0;j<m;j++)
+            cout<<allocation[i][j]<<" ";
+            cout<<setw(6);
+            
+            for(j=0;j<m;j++)
+			{
+                if(k==1) {
+                    cout<<"  ";
+                    continue;
+                }
+				else
+					cout<<available[j]<<" ";
+            }
+			
+            if(k==1)
+				cout<<" ";
+            cout<<setw(8);
+			
+            for(j=0;j<m;j++)
+                cout<<need[i][j]<<" ";
+
+            k=1;
+			cout<<endl;
+        }
+		
+        SafeSequence();
+		
+        if(flag) {
+            RestoreState();
+        }
+		else {
+            cout<<"\nSafe Sequence Exists and request can be granted immediately to process.\nSnapshot after request:\n";
+			display();
+        }
+}
+
+int main() {
+    char ch = 'y';
+
+    InitialiseResources();
+
+    do {
+        Bankers();
+		cout<<"\n\nTry another Process?(Y/N)"; // try another request ??
+		cin>>ch;
+    }while(ch=='y'||ch=='Y');
+
+    return 0;
+}*/
