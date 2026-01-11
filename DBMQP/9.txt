@@ -1,0 +1,27 @@
+1. create user 'emp1'@'localhost' identified by 'emp1pass';
+   create user 'emp2'@'localhost' identified by '';
+   create user 'emp3'@'%' identified by 'unknownuser';
+
+2. GRANT ALL privileges on AdminEmployees to 'emp1'@'localhost';
+
+3. GRANT select on employee to 'emp2'@'localhost' with grant option;
+   GRANT update(Empname, deptno) on employee to 'emp2'@'localhost' with grant option;
+
+4. sudo /opt/lampp/bin/mysql -u emp2 -p
+   GRANT select on employee to 'emp1'@'localhost';
+   GRANT update(Empname, deptno) on employee to 'emp1'@'localhost';
+   
+5. sudo /opt/lampp/bin/mysql -u root -p
+   grant all privileges on *.* to 'emp3'@'%' with grant option;
+
+6. show grants for 'emp1'@'localhost';
+   show grants for 'emp2'@'localhost';
+   show grants for 'emp3'@'%';
+
+7. revoke all privileges on AdminEmployees from 'emp1'@'localhost';
+
+8. show privileges;
+
+9. CREATE INDEX empid_index ON employee(Empno);
+
+10. select * from information_schema.user_privileges;

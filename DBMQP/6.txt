@@ -1,0 +1,23 @@
+1. select Dname, count(Empno) as no_of_employees, min(salary), max(salary), avg(salary) from employee natural join dept group by Dname ;
+
+2. select Dname, sum(salary) as payable from employee natural join dept group by Dname ;
+
+3. select job, count(Empno) as no_of_employees from employee group by job order by no_of_employees desc ;
+
+4. select job, sum(salary), avg(salary), min(salary) from employee group by job ;
+
+5. select job, sum(salary) from employee natural join dept where Dname = 'research' group by job ;
+
+6. select job, sum(salary) as total_salary, avg(salary) from employee inner join dept on employee.deptno = dept.deptno where Dname = 'admin' group by job having avg(salary) > 50000 ;
+
+7. select Dname, count(Proj_num) as total_projects from dept inner join project on dept.deptno = project.dnum group by Dname ;
+
+8. select Proj_num, Pname, count(eno) as total_employees from project inner join workson on project.Proj_num = workson.pno group by Proj_num ;
+
+9. select Pno, Pname, sum(hours_per_week) as total_hours from project inner join workson on project.Proj_num = workson.pno group by Proj_num ;
+
+10. select Proj_num, Pname as project_name, location, dnum, avg(salary) from project inner join workson on project.Proj_num = workson.pno inner join employee on workson.eno = employee.Empno group by Proj_num having count(eno) > 3;
+
+11. select Dname, max(salary), min(salary) from employee natural join dept where gender = 'F' group by Dname having count(Empno) > 2;
+
+12. select Empname, count(pno) as total_projects, sum(hours_per_week) as total_time from employee inner join workson on employee.Empno = workson.eno group by Empname ;

@@ -1,0 +1,31 @@
+1. select count(Empno) from employee;
+
+2. select count(distinct job) as no_of_jobs from employee;
+
+3. select sum(salary) from employee;
+
+4. select max(salary), min(salary) from employee;
+
+5. select avg(salary) from employee where job = 'Salesperson';
+
+6. select count(Empno) from employee where job = 'CLERK';
+
+7. select count(Empno), min(salary) from employee natural join dept where Dname = 'Admin';
+
+8. select min(hiredate), max(hiredate) from employee;
+
+9. select count(Empno) from employee where commision > salary;
+
+10. select count(Empno) from employee inner join workson on employee.Empno = workson.eno inner join project on workson.pno = project.Proj_num where Pname = 'research' and hours_per_week > 10;
+
+11. select count(Proj_num) from project inner join dept on project.dnum = dept.deptno where Dname = 'Admin';
+
+12. select count(distinct e2.Empno) as Female_manager_count, avg(e2.salary) as average_salary from employee e1 inner join employee e2 on e1.managerno = e2.Empno where e2.gender = 'F';
+
+13. select count(Proj_num) from project inner join dept on project.dnum = dept.deptno where Dname = 'Admin';
+
+14. select sum(hours_per_week) as total_hours from project inner join workson on project.Proj_num = workson.pno where Pname = 'Computerization';
+
+15. select count(Proj_num) as no_of_projects from project inner join dept on project.dnum = dept.deptno where project.location =  dept.location ;
+
+

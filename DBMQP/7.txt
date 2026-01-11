@@ -1,0 +1,36 @@
+1. select * from employee where job = (select job from employee where Empname = 'Smith');
+
+2. select Empname from employee natural join dept where Dname in ('SALES', 'RESEARCH');
+
+3. select Empname, salary from employee natural join dept where location = 'Bangalore';
+
+4. select Empname from employee where salary > (select min(salary) from employee natural join dept where Dname = 'RESEARCH');
+
+5. select Empname from employee where salary > (select max(salary) from employee natural join dept where Dname = 'ADMIN');
+
+6. select Empname from employee where salary = (select max(salary) from employee);
+
+7. select e.empname, d.Dname from dept d natural join employee e where e.salary in (select max(salary) from employee where e.deptno=deptno);
+
+8. select * from employee where salary = (select max(salary) from employee where salary < (select max(salary) from employee));
+
+9. select * from employee where Empno in (select managerno from employee where managerno is NOT NULL group by managerno having count(*) = (select max(cnt) from (select count(*) as 
+   cnt from employee where managerno is NOT NULL group by managerno) as T));
+
+10. select * from employee e1 where salary > (select avg(salary) from employee e2 where e1.deptno = e2.deptno);
+
+11. select e1.Empno, e1.Empname, e1.managerno, e2.Empname as managername from employee e1 inner join employee e2 on e1.managerno = e2.Empno where e1.salary > e2.salary;
+
+12. select Dname from dept where (select avg(salary) from employee where deptno = dept.deptno) < (select avg(salary) from employee);
+
+13. select deptno, Dname, count(*) from employee natural join dept where salary > 40000 and deptno in (select deptno from employee group by deptno having count(*) > 2) 
+    group by deptno, Dname;
+
+14. select Empname from employee where empno in (select eno from workson group by eno having sum(hours_per_week) = (select max(total_hours) from (select eno, sum(hours_per_week) 
+    as total_hours from workson group by eno) as T));
+
+15. select Empno, Empname from employee where Empno in (select Empno from employee inner join workson on employee.Empno = workson.eno inner join project on workson.pno = project.Proj_num where dnum = 2);
+
+16. select Empname from employee inner join workson on employee.Empno = workson.eno where hours_per_week = (select max(hours_per_week) from workson);
+
+17. select Empname, Dname from employee e natural join dept where salary in (select max(salary) from employee where deptno = e.deptno);

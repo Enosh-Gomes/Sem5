@@ -1,0 +1,29 @@
+1. select Empno, Empname, deptno, Dname from employee natural join dept;
+    
+2. select Empname, Dname, location from employee natural join dept;
+
+3. select Empname, Dname from employee natural join dept where job = 'CLERK';
+
+4. select e1.Empname as Empname, e1.job as Job, e2.Empname as Manager, e2.job as Mgrjob from employee e1, employee e2 where e1.managerno = e2.Empno ;
+
+5. select Empname from employee natural join dept where Dname = 'Sales' or Dname = 'Research';
+
+6. select Empname, salary from employee natural join dept where location = 'Bangalore';
+
+7. select Empname, commision from employee natural join dept where Dname = 'Admin' and gender = 'F';
+
+8. select Empname from project inner join workson on project.Proj_num = workson.pno inner join employee on workson.eno = employee.Empno where Pname = 'Cloud Computing';
+
+9. select Pname from project inner join dept on project.dnum = dept.deptno where Dname = 'Admin';
+
+10. select Empname from project inner join workson on project.Proj_num = workson.pno inner join employee on workson.eno = employee.Empno where Pname = 'DBMS' and hours_per_week > 20;
+
+11. select Empname from project inner join workson on project.Proj_num = workson.pno inner join employee on workson.eno = employee.Empno where employee.deptno = project.dnum;
+
+12. select Pname from project inner join dept on project.dnum = dept.deptno and project.location = dept.location;
+
+13. select distinct e2.Empname as Mgrname, Pname from employee e1 inner join employee e2 on e1.managerno = e2.Empno inner join workson on e2.Empno = workson.eno inner join project on workson.pno = project.Proj_num;
+
+14. select distinct e2.Empname, e2.salary from employee e1 inner join employee e2 on e1.managerno = e2.Empno inner join workson on e2.Empno = workson.eno inner join project on workson.pno = project.Proj_num where hours_per_week > 15 and Pname = 'Computerization';
+
+15. select Empname from employee inner join workson on employee.Empno = workson.eno inner join project on workson.pno = project.Proj_num where project.location = 'Mumbai';

@@ -1,0 +1,71 @@
+create table table1 (a1 INT);
+create table table2 (a2 INT);
+create table table3 (a3 INT);
+create table table4 (a4 INT, b4 INT);
+
+DELIMITER #
+CREATE TRIGGER trg_table1_insert
+    after insert on table1
+    for each row
+    begin
+    insert into table2 (a2) values (new.a1);
+    delete from table3 where a3 = new.a1;
+    update table4 set b4 = b4 + 1 where a4 = new.a1;
+    END #
+DELIMITER ;
+
+
+
+create table emp_proj(
+    empid INT,
+     no_of_projects INT,
+    total_no_of_hours INT
+    );
+
+create table proj_info(
+    project_no INT,
+    no_of_employees INT,
+    total_no_of_hours_spent INT
+    );
+
+DELIMITER #
+CREATE TRIGGER trg_workson_delete
+    after delete on workson
+    for each row
+    BEGIN
+    update emp_proj
+    set no_of_projects = no_of_projects - 1,
+    total_no_of_hours = total_no_of_hours - old.hours_per_week
+    where empid = old.eno;
+    
+    update proj_info
+    set no_of_employees = no_of_employees - 1,
+    total_no_of_hours_spent = total_no_of_hours_spent - old.hours_per_week
+    where project_no = old.pno;
+    END #
+DELIMITER ;
+
+DELIMITER #
+CREATE TRIGGER trg_workson_insert
+    after insert on workson
+    for each row
+    BEGIN
+    if exists (select * from emp_proj where empid = new.eno) then
+    update emp_proj
+    set no_of_projects = no_of_projects + 1,
+    total_no_of_hours = total_no_of_hours + new.hours_per_week
+    where empid = new.eno;
+    else
+    insert into emp_proj values (new.eno, 1, new.hours_per_week);
+    end if;
+    
+    if exists (select * from proj_info where project_no = new.pno) then
+    update proj_info
+    set no_of_employees = no_of_employees + 1,
+    total_no_of_hours_spent = total_no_of_hours_spent+ new.hours_per_week
+    where project_no = new.pno;
+    else
+    insert into proj_info values(new.pno, 1, new.hours_per_week);
+    end if;
+    END #
+DELIMITER ;

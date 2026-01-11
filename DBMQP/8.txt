@@ -1,0 +1,61 @@
+1. create view AdminEmplyoees as select Empno, Empname, salary, Dname from employee natural join dept where Dname = 'Admin';
+
+// alter table project add column pbudget int;
+// alter table project add column duration float;
+// alter table project add column status varchar(25);
+
+2. create view ProjectEmployeeDetails as select project.Proj_num, project.Pname, project.pbudget, project.status, project.location, project.duration, employee.Empname, employee.salary, dept.Dname, workson.hours_per_week from project inner join workson on project.Proj_num = workson.pno inner join employee on workson.eno = employee.Empno natural join dept;
+
+3. create view DeptEmployees as select Dname, count(Empno) as no_of_employees, avg(salary) as average_salary from employee natural join dept group by Dname;
+
+4. create view EmployeeProjectInfo as select employee.Empname, employee.Empno, employee.salary, project.Proj_num, project.Pname, project.status, workson.hours_per_week from project inner join workson on project.Proj_num = workson.pno inner join employee on workson.eno = employee.Empno;
+
+5. Create view ProjectEmployees as select Proj_num, count(Empno) as no_of_employees, sum(hours_per_week) as total_hours from EmployeeProjectInfo group by Proj_num;
+
+6. create view EmployeeWorkLoad as select Empno, count(distinct Proj_num) as no_of_projects, sum(hours_per_week) as total_hours from EmployeeProjectInfo group by Empno;
+
+7. create temporary table BangaloreProjectEmployees as select project.Proj_num, project.Pname, project.location, employee.Empno, employee.Empname, employee.salary, dept.Dname from project inner join workson on project.Proj_num = workson.pno inner join employee on workson.eno = employee.Empno natural join dept where project.location = 'Bangalore';
+
+8. select Empno, Empname from BangaloreProjectEmployees group by Empno, Empname having count(distinct Proj_num) = (select count(distinct Proj_num) from project where location = 'Bangalore');
+
+// add data for valid case on Q8
+
+9.
+
+1) select Proj_num from ProjectEmployees where no_of_employees = (select min(no_of_employees) from ProjectEmployees);
+
+2) select Empno, no_of_projects from EmployeeWorkLoad where no_of_projects = (select max(no_of_projects) from EmployeeWorkLoad);
+
+3) select Dname from DeptEmployees where average_salary > (select avg(salary) from employee);
+
+**********************// Note (ACTION): rename 'ProjectEmployees' view as 'ProjectProgress'
+
+
+
+
+
+
+
+*********
+
+to find views created:
+
+use information_schema
+
+show tables;
+
+select * from views;
+
+select * from views where table_schema='ccompany';
+
+select table_name,is_updatable from views where table_schema='ccompany';
+
+another way:
+
+use ccompany;
+
+select table_name,is_updatable from information_schema.views where table_schema='ccompany';
+
+select table_name,is_updatable,view_definition from information_schema.views where table_schema='ccompany';
+
+***********Done
